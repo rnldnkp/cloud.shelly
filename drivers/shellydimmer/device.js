@@ -146,8 +146,18 @@ class ShellyDimmerDevice extends Homey.Device {
 
       switch(capability) {
         case 'switch':
-          if (value != this.getCapabilityValue('onoff')) {
-            this.setCapabilityValue('onoff', value);
+          if(this.getData().id.includes('E0980695B698')) {
+            this.log('CoAP message received for shellydimmer2-E0980695B698 and capability switch with value', value);
+            if (value != this.getCapabilityValue('onoff')) {
+              this.log('Updating Homey onoff capability for shellydimmer2-E0980695B698 from', this.getCapabilityValue('onoff'), 'to', value);
+              this.setCapabilityValue('onoff', value);
+            } else {
+              this.log('Homey onoff capability for shellydimmer2-E0980695B698 is already in sync with received CoAP message, no update needed');
+            }
+          } else {
+            if (value != this.getCapabilityValue('onoff')) {
+              this.setCapabilityValue('onoff', value);
+            }
           }
           break;
         case 'brightness':
