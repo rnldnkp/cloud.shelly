@@ -15,6 +15,8 @@ class Shelly25RollerShutterDevice extends Homey.Device {
 
     this.setAvailable();
 
+    this.log('Shelly 2.5 Rollershutter with ID', this.getData().id);
+
     // ADD AND REMOVE CAPABILITIES
     // TODO: REMOVE AFTER 3.1.0
     if (!this.hasCapability('meter_power')) {
