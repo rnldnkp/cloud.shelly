@@ -108,6 +108,7 @@ class ShellyPlugDevice extends Homey.Device {
           let meter_power = value * 0.000017;
           if (meter_power != this.getCapabilityValue('meter_power')) {
             this.setCapabilityValue('meter_power', meter_power);
+            this.log('Updating meter_power for', this.getName(), 'to', meter_power);
           }
           break;
         default:
