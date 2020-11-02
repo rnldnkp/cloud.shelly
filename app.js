@@ -227,17 +227,14 @@ class ShellyApp extends Homey.App {
 
     // COAP DISCOVERY AND MESSAGES
     shellies.on('discover', device => {
-      //this.log('Discovered device with ID', device.id, 'and type', device.type);
+      this.log('Discovered device with ID', device.id, 'and type', device.type);
 
       device.on('change', (prop, newValue, oldValue) => {
         try {
-          if (device.type === 'SHPLG-1' || device.type === 'SHPLG-S') {
-            this.log(prop, 'changed from', oldValue, 'to', newValue, 'for device', device.id);
-          }
+          this.log(prop, 'changed from', oldValue, 'to', newValue, 'for device', device.id);
 
           if (shellyDevices.length > 0) {
             const filteredShellies = shellyDevices.filter(shelly => shelly.id.includes(device.id));
-            this.log(filteredShellies);
             if (filteredShellies.length > 0) {
               if (filteredShellies.length === 1) {
                 var deviceid = filteredShellies[0].id;
@@ -245,7 +242,6 @@ class ShellyApp extends Homey.App {
                 const channel = prop.slice(prop.length - 1);
                 var deviceid = filteredShellies[0].main_device+'-channel-'+channel;
               }
-              this.log(deviceid);
               const homeydevice = this.homey.drivers.getDriver(filteredShellies[0].driver).getDevice({id: deviceid});
               homeydevice.deviceCoapReport(prop, newValue);
               if (homeydevice.getSetting('address') !== device.host) {
