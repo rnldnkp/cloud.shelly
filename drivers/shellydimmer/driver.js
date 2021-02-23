@@ -67,7 +67,7 @@ class ShellyDimmerDriver extends Homey.Driver {
       try {
         const result = await this.util.sendCommand('/settings', data.address, data.username, data.password);
         const hostname = result.device.hostname;
-        if (hostname.startsWith('shellydimmer-')) {
+        if (hostname.startsWith('shellydimmer-') || hostname.startsWith('shellydimmer2-')) {
           deviceArray = {
             name: 'Shelly Dimmer ['+ data.address +']',
             data: {
@@ -82,6 +82,7 @@ class ShellyDimmerDriver extends Homey.Driver {
               type: result.device.type
             }
           }
+          return Promise.resolve(deviceArray);
         } else {
           return Promise.reject(this.homey.__('driver.wrongdevice'));
         }

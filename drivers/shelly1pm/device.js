@@ -24,6 +24,7 @@ class Shelly1pmDevice extends Homey.Device {
     this.homey.flow.getDeviceTriggerCard('triggerTemperature1');
     this.homey.flow.getDeviceTriggerCard('triggerTemperature2');
     this.homey.flow.getDeviceTriggerCard('triggerTemperature3');
+    this.homey.flow.getDeviceTriggerCard('triggerOverpowered');
 
     this.setAvailable();
 
@@ -147,6 +148,16 @@ class Shelly1pmDevice extends Homey.Device {
         }
       }
 
+      // external input
+      if (result.ext_switch.hasOwnProperty() && !this.hasCapability('alarm_generic.external')) {
+        this.addCapability('alarm_generic.external');
+      } else if (result.ext_switch.hasOwnProperty() && this.hasCapability('alarm_generic.external')) {
+        let alarm_external = result.ext_switch[0].input === 0 ? false : true;
+        if (alarm_external != this.getCapabilityValue('alarm_generic.external')) {
+          this.setCapabilityValue('alarm_generic.external', alarm_external);
+        }
+      }
+
     } catch (error) {
       this.setUnavailable(this.homey.__('device.unreachable') + error.message);
       this.log(error);
@@ -202,6 +213,12 @@ class Shelly1pmDevice extends Homey.Device {
             this.setCapabilityValue('measure_humidity', value);
           }
           break;
+        case 'externalInput0':
+          let alarm_external = value === 0 ? false : true;
+          if (alarm_external != this.getCapabilityValue('alarm_generic.external')) {
+            this.setCapabilityValue('alarm_generic.external', alarm_external);
+          }
+          break;
         case 'input0':
           let alarm = value === 0 ? false : true;
           if (alarm != this.getCapabilityValue('alarm_generic')) {
@@ -215,6 +232,11 @@ class Shelly1pmDevice extends Homey.Device {
         case 'inputEventCounter0':
           if (value > 0) {
             this.homey.flow.getTriggerCard('triggerCallbacks').trigger({"id": this.getData().id, "device": this.getName(), "action": this.getStoreValue('actionEvent')}, {"id": this.getData().id, "device": this.getName(), "action": this.getStoreValue('actionEvent')});
+          }
+          break;
+        case 'overPower':
+          if (value) {
+            this.homey.flow.getDeviceTriggerCard('triggerOverpowered').trigger(this, {}, {});
           }
           break;
         default:
